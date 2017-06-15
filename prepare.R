@@ -1,6 +1,7 @@
 library(sf)
 library(dplyr)
 
+dir.create("data", recursive = TRUE)
 # gemeentekaart
 
 download.file("https://cartomap.github.io/nl/rd/gemeente_2014.geojson", "data/gemeente_2014.geojson")
