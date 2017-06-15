@@ -1,7 +1,7 @@
-library(sf)
 library(dplyr)
+library(sf)
 
-dir.create("data", recursive = TRUE)
+dir.create("data", recursive = TRUE, showWarnings = FALSE)
 # gemeentekaart
 
 download.file("https://cartomap.github.io/nl/rd/gemeente_2014.geojson", "data/gemeente_2014.geojson")
@@ -11,7 +11,7 @@ gemeente <- st_read("data/gemeente_2014.geojson") %>%
 
 st_write(gemeente, "data/gemeente.geojson",delete_dsn = TRUE)
 centers <- st_centroid(gemeente)
-centers <-cbind(centers, st_coordinates(centroid))
+centers <-cbind(centers, st_coordinates(centers))
 st_write(centers, "data/centers.geojson", delete_dsn=TRUE)
 
 
