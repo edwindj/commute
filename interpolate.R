@@ -34,7 +34,13 @@ png("img/p%03d.png")
 
 my_plot <- function(a, i){
   tm_shape(a) + 
-    tm_bubbles("banen", col=my_pal(i), border.lwd=0) + 
+    tm_bubbles("banen", col=my_pal(i), border.lwd=0, alpha=0.8) + 
+    tm_legend(legend.show=F)
+}
+
+my_plot2 <- function(a, col){
+  tm_shape(a) + 
+    tm_bubbles("banen", col=col, border.lwd=0, alpha=0.8) + 
     tm_legend(legend.show=F)
 }
 
@@ -52,4 +58,26 @@ library(magick)
 im <- image_read(list.files("img", "*.png", full.names = T))
 im <- c(im, tail(rev(im),-1))
 an <- image_animate(image_join(im))
-image_write(an, "test.gif")
+image_write(an, "nl.gif")
+
+
+# per region
+i = 0.5
+region <- "GM0363"
+
+ams_from <- 
+  banen_com %>% filter(woon == region)
+
+ams_to <- 
+  banen_com %>% filter(werk == region)
+
+png("img/ams%03d.png")
+for (i in seq(0, 1, by=0.05)){
+  from <- interpolate(ams_from, coord, s=i)
+  p <- my_plot2(from, my_pal(0))
+
+  to  <- interpolate(ams_to, coord, s=i)
+  p <- p + my_plot2(to, my_pal(1))
+  print(p)
+}
+dev.off()
