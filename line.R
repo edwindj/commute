@@ -22,7 +22,4 @@ a <- create_lines(banen, coord, s=0.1)
 
 library(tmap)
 
-plot(a, col=adjustcolor("red", alpha.f = 0.01))
-tm_shape(a) + tm_lines()
-
-st_make_grid()
+plot(a, col=adjustcolor("red", alpha.f = 0.2), lwd=log(a$banen)/log(max(a$banen)))
