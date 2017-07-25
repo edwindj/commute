@@ -2,6 +2,8 @@ library(sf)
 library(dplyr)
 
 centers <- st_read("data/centers.geojson")
+bbox <- tmaptools::bb(centers)
+
 banen <- read.csv("data/banen.csv")
 
 library(dplyr)
@@ -62,11 +64,13 @@ my_pal <- function(i){
   rgb(f(i), maxColorValue = 255)
 }
 
+st_bbox(a)
+
 a <- interpolate(banen,coord, centers, s=0.1)
 #View(a)
 library(tmap)
 
-tm_shape(a) + 
+tm_shape(a, bbox=bbox) + 
    tm_bubbles("banen", col="red", border.lwd=0) + tm_legend(legend.show=FALSE)
 
 unlink("img", recursive = TRUE)
