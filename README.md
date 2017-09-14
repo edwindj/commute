@@ -1,7 +1,10 @@
 # Plotting commuting in NL
 
 ## Per municipality (gemeente)
-![wijk](nl.gif)
+![gemeente](nl_gm.gif)
 
 ## Per district (wijk)
 ![wijk](nl_wk.gif)
+
+## Origin destination
+
