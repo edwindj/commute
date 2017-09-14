@@ -27,7 +27,7 @@ st_extent <- function(x){
 
 st_extent(wijk)
 
-r <- raster(st_extent(wijk), ncol=20, nrow=20)
+r <- raster(st_extent(wijk), ncol=15, nrow=15)
 
 cell_id <- 
   wijk %>% 
@@ -83,4 +83,17 @@ for (n in names(cell_id)){
 }
 
 
-plot(log(b2), legend=FALSE, axes=FALSE, box=F, omi=c(0,0,0,0), col="blue")
+par(mai = c(0,0,0,0))
+plot(log(b2), legend=FALSE, axes=FALSE, box=F, omi=c(0,0,0,0), col=rev(viridis::viridis(10)))
+
+b_rel <- raster(b2)
+for (n in names(cell_id)){
+  v <- b[[n]]
+  v <- v / max(v[], na.rm=T)
+  ri <- rc[n,1]
+  ci <- rc[n,2]
+  ri <- seq(ri, length.out = nr)
+  ci <- seq(ci, length.out = nc)
+  b_rel[ri, ci] <- v 
+}
+
