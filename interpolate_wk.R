@@ -1,11 +1,21 @@
 library(sf)
 library(dplyr)
+library(tmap)
 
-centers <- st_read("data/centers.geojson")
+centers <- 
+  st_read("data/wk_2015.shp", stringsAsFactors = FALSE) %>% 
+  st_centroid() %>% 
+  select(code = STATCODE, name = WK_NAAM)
+
 CRS <- st_crs(centers)
 bbox <- tmaptools::bb(centers)
 
-banen <- read.csv("data/banen.csv")
+banen <- read.csv("data/wk_home_work.csv", stringsAsFactors = FALSE) %>% 
+  rename(woon = wk_home, werk = wk_work, banen = count) %>% 
+  mutate( woon = sprintf("WK%06d",woon)
+        , werk = sprintf("WK%06d",werk)
+        )
+
 
 woon_tot <- 
   banen %>% 
@@ -55,31 +65,25 @@ interpolate <- function(banen, coord, crs=st_crs(centers), s=0){
   st_sf(banen=value, st_cast(st_sfc(st_multipoint(pos)), "POINT"), crs = crs) 
 }
 
-i <- 0.5
-a <- interpolate(banen,coord, CRS, s=i)
 
 f <- colorRamp(c("#0058b8","#e94c0a"), space = "Lab", interpolate = "spline")
 my_pal <- function(i){
   rgb(f(i), maxColorValue = 255)
 }
 
-#st_bbox(a)
-
-color <- my_pal(0.1)
-#View(a)
-library(sp)
-library(tmap)
+i <- 0.5
+a <- interpolate(banen,coord, CRS, s=i)
 
 tm_shape(a, bbox=bbox) + 
-   tm_bubbles("banen", col=color, border.lwd=0) +
-   tm_legend(legend.show=FALSE) +  
-   tm_layout(frame = FALSE) + 
-   tm_credits("CBS, 2017", align = "right")
+  tm_bubbles("banen", col=my_pal(i), border.lwd=0, alpha=0.15) + 
+  tm_legend(legend.show=FALSE) +  
+  tm_layout(frame = FALSE) + 
+  tm_credits("CBS, 2017", align = "right")
 
-unlink("img", recursive = TRUE)
-dir.create("img")
+unlink("img_wk", recursive = TRUE)
+dir.create("img_wk")
 
-png("img/p%03d.png",height = 600, width=480)
+png("img_wk/p%03d.png",height = 600, width=480)
 
 snapshot <- 
   seq(pi,0,  length.out = 21) %>% 
@@ -93,7 +97,7 @@ snapshot <-
 
 my_plot <- function(a, i){
   tm_shape(a,bbox = bbox) + 
-    tm_bubbles("banen", col=my_pal(i), border.lwd=0, alpha=0.6) + 
+    tm_bubbles("banen", col=my_pal(i), border.lwd=0, alpha=0.15) + 
     tm_legend(legend.show=FALSE) +  
     tm_layout(frame = FALSE) + 
     tm_credits("CBS, 2017", align = "right")
@@ -124,7 +128,7 @@ for (i in snapshot){
 dev.off()
 
 library(magick)
-im <- image_read(list.files("img", "p\\d{3}\\.png", full.names = T))
+im <- image_read(list.files("img_wk", "p\\d{3}\\.png", full.names = T))
 im
 
 library(purrr)
@@ -146,7 +150,7 @@ an <-
   image_join() %>% 
   image_animate()
 
-image_write(an, "nl_gm.gif")
+image_write(an, "nl_wk.gif")
 
 
 # per region
