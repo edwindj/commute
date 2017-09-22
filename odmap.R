@@ -3,7 +3,7 @@ library(sf)
 library(tmap)
 
 wijk <- st_read("data/wk_2015.shp")  %>% 
-  select(code = STATCODE, name = WK_NAAM, gm_code = GM_2015)
+  dplyr::select(code = STATCODE, name = WK_NAAM, gm_code = GM_2015)
 
 od_wijk <- read.csv("data/wk_home_work.csv", stringsAsFactors = F) %>% 
   mutate( wk_home = sprintf("WK%06d", wk_home)
@@ -27,7 +27,7 @@ st_extent <- function(x){
 
 st_extent(wijk)
 
-r <- raster(st_extent(wijk), ncol=20, nrow=20)
+r <- raster(st_extent(wijk), ncol=15, nrow=15)
 
 cell_id <- 
   wijk %>% 
@@ -56,6 +56,7 @@ l <- lapply(names(s), function(cell){
 })
 
 b <- do.call(stack, l)
+dir.create("od", recursive = TRUE)
 writeRaster(b,  filename = "od/od.grd", overwrite=T)
 
 nc <- ncol(b)
@@ -83,4 +84,7 @@ for (n in names(cell_id)){
 }
 
 
-plot(log(b2), legend=FALSE, axes=FALSE, box=F, omi=c(0,0,0,0), col="blue")
+png("od_wk.png")
+par(mai=c(0,0,0,0))
+plot(log(b2), legend=FALSE, axes=FALSE, box=F, col=viridis::viridis(10))
+dev.off()

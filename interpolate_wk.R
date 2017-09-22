@@ -16,6 +16,8 @@ banen <- read.csv("data/wk_home_work.csv", stringsAsFactors = FALSE) %>%
         , werk = sprintf("WK%06d",werk)
         )
 
+# st_write(centers, "data/wk_centers.geojson")
+# saveRDS(banen, "data/banen_wk.rds")
 
 woon_tot <- 
   banen %>% 
